@@ -7,6 +7,7 @@ model=Model()
 from flask_cors import CORS, cross_origin
 app = flask.Flask(__name__)
 cors = CORS(app)
+
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.config["DEBUG"] = True
 
@@ -63,12 +64,15 @@ def train():
     else:
         return _corsify_actual_response(jsonify("Post not good"))
 @app.route('/predict', methods = ['GET', 'POST'])
+@cross_origin()
 def predict():
 
     if request.method == "OPTIONS": # CORS preflight
         return _build_cors_prelight_response()
     elif request.method == 'POST':
-        lst=[]
+        lst=request.form['a'].split(")(*&^")
+        print("len(lst)",len(lst))
+        """
         lst.append(request.form['a'])
         lst.append(request.form['b'])
         lst.append(request.form['c'])
@@ -81,11 +85,11 @@ def predict():
         lst.append(request.form['j'])
         lst.append(request.form['k'])
         lst.append(request.form['l'])
-        lst.append(request.form['m'])
+        lst.append(request.form['m'])"""
         print(lst)
         if len(lst)==13:
-            res=model.predict(lst)
-            return _corsify_actual_response(jsonify(str(res)))
+            response=model.predict(lst)
+            return jsonify(str(response))
         else:
             return _corsify_actual_response(jsonify("Error in input parameters"))
 
